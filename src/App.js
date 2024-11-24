@@ -5,6 +5,7 @@ import SurveyDetail from "./components/SurveyDetail";
 import SurveyResponse from './components/SurveyResponse';
 import SurveyResults from './components/SurveyResults';
 import axios from 'axios';
+import './styles.css';
 
 function App() {
   const [surveys, setSurveys] = useState([]);

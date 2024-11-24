@@ -1,31 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-const SurveyResponse = ({ surveys }) => {
-  const { id } = useParams(); // URL'deki anket ID'sini al
-  const survey = surveys.find(s => s.id === parseInt(id)); // İlgili anketi bul
-  
-  const [answers, setAnswers] = useState({}); // Kullanıcının yanıtları
+function SurveyResponse() {
+  const { id } = useParams();
+  const [survey, setSurvey] = useState(null);
+  const [responses, setResponses] = useState({});
+  const [loading, setLoading] = useState(true);
 
-  if (!survey) {
-    return <p>Anket bulunamadı.</p>;
-  }
+  // Anketi backend'den çekme
+  useEffect(() => {
+    const fetchSurvey = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/respond/${id}`);
+        setSurvey(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Anket yüklenirken bir hata oluştu:', error);
+        setLoading(false);
+      }
+    };
 
-  // Kullanıcının soruları yanıtlamasını sağlayan fonksiyon
-  const handleAnswerChange = (questionId, answer) => {
-    setAnswers({ ...answers, [questionId]: answer });
+    fetchSurvey();
+  }, [id]);
+
+  // Yanıtların değiştirilmesini yönetme
+  const handleResponseChange = (question, answer) => {
+    setResponses((prevResponses) => ({
+      ...prevResponses,
+      [question]: answer,
+    }));
   };
 
-  // Yanıt gönderme işlemi
-  const handleSubmit = async (surveyId, responses) => {
+  // Yanıtları gönderme
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Sayfa yenilemeyi engelle
     try {
-      const response = await axios.post(`http://localhost:5000/responses/${surveyId}`, responses);
-      console.log('Yanıtlar başarıyla kaydedildi');
+      const responseArray = Object.keys(responses).map((question) => ({
+        question,
+        answer: responses[question],
+      }));
+
+      await axios.post(`http://localhost:5000/respond/${id}`, responseArray);
+      alert('Yanıtlar başarıyla kaydedildi!');
+      setResponses({}); // Yanıtları sıfırla
     } catch (error) {
-      console.error('Yanıtlar kaydedilemedi:', error);
+      console.error('Yanıtlar kaydedilirken bir hata oluştu:', error);
+      alert('Yanıtlar kaydedilemedi, lütfen tekrar deneyin.');
     }
   };
+
+  if (loading) {
+    return <div>Yükleniyor...</div>;
+  }
+
+  if (!survey) {
+    return <div>Anket bulunamadı.</div>;
+  }
 
   return (
     <div>
@@ -34,45 +65,46 @@ const SurveyResponse = ({ surveys }) => {
       <form onSubmit={handleSubmit}>
         {survey.questions.map((question, index) => (
           <div key={index}>
-            <p>{question.text}</p>
-            {question.type === 'multiple-choice' ? (
-              question.options.map((option, optIndex) => (
-                <label key={optIndex}>
-                  <input 
-                    type="radio" 
-                    name={`question-${index}`} 
-                    value={option} 
-                    onChange={() => handleAnswerChange(index, option)} 
-                    required
-                  />
-                  {option}
-                </label>
-              ))
-            ) : question.type === 'open-ended' ? (
-              <textarea 
-                onChange={(e) => handleAnswerChange(index, e.target.value)} 
-                required
-              />
-            ) : (
+            <label>{question.text}</label>
+            {question.type === 'multiple-choice' && (
               <div>
-                <label>
-                  <input 
-                    type="radio" 
-                    name={`question-${index}`} 
-                    value="yes" 
-                    onChange={() => handleAnswerChange(index, 'yes')} 
-                    required
-                  /> Evet
-                </label>
-                <label>
-                  <input 
-                    type="radio" 
-                    name={`question-${index}`} 
-                    value="no" 
-                    onChange={() => handleAnswerChange(index, 'no')} 
-                    required
-                  /> Hayır
-                </label>
+                {question.options.map((option, optIndex) => (
+                  <div key={optIndex}>
+                    <input
+                      type="radio"
+                      name={`question-${index}`}
+                      value={option}
+                      onChange={(e) => handleResponseChange(question.text, e.target.value)}
+                    />
+                    {option}
+                  </div>
+                ))}
+              </div>
+            )}
+            {question.type === 'open-ended' && (
+              <div>
+                <input
+                  type="text"
+                  onChange={(e) => handleResponseChange(question.text, e.target.value)}
+                />
+              </div>
+            )}
+            {question.type === 'yes-no' && (
+              <div>
+                <input
+                  type="radio"
+                  name={`question-${index}`}
+                  value="Evet"
+                  onChange={(e) => handleResponseChange(question.text, e.target.value)}
+                />
+                Evet
+                <input
+                  type="radio"
+                  name={`question-${index}`}
+                  value="Hayır"
+                  onChange={(e) => handleResponseChange(question.text, e.target.value)}
+                />
+                Hayır
               </div>
             )}
           </div>
@@ -81,6 +113,6 @@ const SurveyResponse = ({ surveys }) => {
       </form>
     </div>
   );
-};
+}
 
 export default SurveyResponse;

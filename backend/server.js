@@ -23,15 +23,30 @@ app.get('/surveys', (req, res) => {
 
 app.get('/respond/:id', (req, res) => {
   const surveyId = parseInt(req.params.id);
-  const survey = surveys.find(survey => survey.id === surveyId);
 
+  // Anketi bul
+  const survey = surveys.find(s => s.id === surveyId);
   if (!survey) {
     return res.status(404).send('Anket bulunamadı');
   }
 
-  // Anketi bulduk, kullanıcıya anketin sorularını gösteren bir yanıt döndürebilirsiniz
-  res.status(200).json(survey); // Ankete ait soruları ve detayları dönebiliriz
+  // SurveyResponses dizisinde ilgili yanıtları bul
+  const responses = surveyResponses
+    .filter(response => response.surveyId === surveyId)
+    .flatMap(r => r.responses); // Gelen yanıtları birleştir
+
+  // Tam anketi yanıtlarla birlikte döndür
+  const completeSurvey = {
+    ...survey,
+    responses // Yanıtlar artık düz bir dizi
+  };
+
+  console.log("Tam anket ve yanıtlar:", completeSurvey);
+  res.status(200).json(completeSurvey);
 });
+
+
+
 
 app.get('/results/:id', (req, res) => {
   const surveyId = parseInt(req.params.id);
@@ -83,13 +98,16 @@ app.post('/respond/:id', (req, res) => {
     return res.status(404).send('Anket bulunamadı');
   }
 
-  const responses = req.body; // Gelen yanıtlar
+  // Gelen yanıtları al ve bir dizi olarak işle
+  const responses = Array.isArray(req.body) ? req.body : req.body.responses || [];
 
   // Gelen yanıtları surveyResponses dizisine ekleyelim
   surveyResponses.push({ surveyId, responses });
   console.log("Kaydedilen yanıtlar:", surveyResponses);
   res.status(200).send('Yanıtlar başarıyla kaydedildi');
 });
+
+
 
 app.delete('/surveys/:id', (req, res) => {
   const surveyId = parseInt(req.params.id);
@@ -122,4 +140,4 @@ app.put('/surveys/:id', (req, res) => {
   console.log('Güncellenen anket:', surveys[surveyIndex]);
   res.status(200).json(surveys[surveyIndex]); // Güncellenen anketi yanıt olarak gönder
 });
-console.log(surveyResponses);
+console.log("Tüm kayıtlı yanıtlar:", surveyResponses);
