@@ -4,6 +4,7 @@ import SurveyForm from './components/SurveyForm';
 import SurveyDetail from "./components/SurveyDetail";
 import SurveyResponse from './components/SurveyResponse';
 import SurveyResults from './components/SurveyResults';
+import SurveyList from './components/SurveyList';
 import axios from 'axios';
 import './styles.css';
 
@@ -79,18 +80,24 @@ function App() {
 
   const updateSurvey = async (updatedSurvey) => {
     try {
-      const response = await axios.put(`http://localhost:5000/surveys/${updatedSurvey.id}`, updatedSurvey);
+      const response = await axios.put(
+        `http://localhost:5000/surveys/${updatedSurvey.id}`,
+        updatedSurvey
+      );
       const updatedSurveyData = response.data;
-      const updatedSurveys = surveys.map(survey => 
+  
+      // Surveys dizisini güncelleyin
+      const updatedSurveys = surveys.map((survey) =>
         survey.id === updatedSurveyData.id ? updatedSurveyData : survey
       );
-      setSurveys(updatedSurveys);
-      console.log('Anket başarıyla güncellendi:', updatedSurveyData);
+  
+      setSurveys(updatedSurveys); // SurveyList'in güncellenmesi için
+      console.log("Anket başarıyla güncellendi:", updatedSurveyData);
     } catch (error) {
-      console.error('Anket güncellenemedi:', error);
+      console.error("Anket güncellenemedi:", error);
     }
   };
-
+  
   const handleEdit = (survey) => {
     setTitle(survey.title);
     setDescription(survey.description);
@@ -109,9 +116,10 @@ function App() {
             <div>
               <h1>Anket Uygulaması</h1>
               <p>Yeni bir anket oluşturmak için formu doldurun.</p>
-
-              <SurveyForm 
-                addSurvey={addSurvey} 
+  
+              {/* Anket oluşturma formu */}
+              <SurveyForm
+                addSurvey={addSurvey}
                 title={title}
                 description={description}
                 startDate={startDate}
@@ -126,44 +134,14 @@ function App() {
                 editingSurvey={editingSurvey}
                 setEditingSurvey={setEditingSurvey}
               />
-
-              <h2>Oluşturulan Anketler:</h2>
-              <ul>
-                {surveys.map((survey, index) => (
-                  <li key={index}>
-                    <strong>{survey.title}</strong>: {survey.description}
-                    <p>Başlangıç Tarihi: {survey.startDate}</p>
-                    <p>Bitiş Tarihi: {survey.endDate}</p>
-                    <p>Durum: {survey.status ? survey.status : 'Durum bilgisi yok'}</p>
-                    <p>
-                      <a href={`/respond/${survey.id}`}>Yanıt Ver</a>
-                    </p>
-                    <p>
-                      Paylaşım Linki:{" "}
-                      {survey.surveyURL ? (
-                        <a
-                          href={survey.surveyURL}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {survey.surveyURL}
-                        </a>
-                      ) : (
-                        "Link oluşturulmadı"
-                      )}
-                      {" "}
-                      <button onClick={() => handleCopyLink(survey.surveyURL)}>
-                        Kopyala
-                      </button>
-                    </p>
-
-                    {/* Düzenle ve Sil butonları */}
-                    <button onClick={() => handleEdit(survey)}>Düzenle</button>
-                    <button onClick={() => deleteSurvey(survey.id)}>Sil</button>
-                  </li>
-                ))}
-              </ul>
-
+  
+              {/* Anket listesi */}
+              <SurveyList
+                surveys={surveys}
+                handleEdit={handleEdit}
+                deleteSurvey={deleteSurvey}
+                handleCopyLink={handleCopyLink}
+              />
             </div>
           }
         />
@@ -175,7 +153,7 @@ function App() {
         <Route path="/results/:id" element={<SurveyResults />} />
       </Routes>
     </Router>
-  );
+  );  
 }
 
 export default App;

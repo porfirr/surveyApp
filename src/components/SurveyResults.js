@@ -8,18 +8,27 @@ function SurveyResults() {
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const groupAnswers = (answers) => {
+    const grouped = {};
+    answers.forEach((answer) => {
+      grouped[answer] = (grouped[answer] || 0) + 1;
+    });
+    return grouped;
+  };
+
   useEffect(() => {
     const fetchResults = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/respond/${id}`);
         console.log('Gelen sonuçlar:', response.data);
-
-        // Gelen veriyi kontrol ediyoruz
+  
+        // Gelen veriyi işliyoruz
         const processedResults = {
           ...response.data,
-          responses: Array.isArray(response.data.responses) ? response.data.responses : [] // Diziye dönüştür
+          responses: Array.isArray(response.data.responses) ? response.data.responses : []
         };
-
+  
+        console.log('İşlenen sonuçlar:', processedResults); // İşlenen veriyi loglayın
         setResults(processedResults);
         setLoading(false);
       } catch (error) {
@@ -27,12 +36,12 @@ function SurveyResults() {
         setLoading(false);
       }
     };
-
+  
     if (id) {
       fetchResults();
     }
   }, [id]);
-
+  
   if (loading) {
     return <div>Yükleniyor...</div>;
   }
@@ -44,28 +53,38 @@ function SurveyResults() {
   return (
     <div>
       <h2>Anket Sonuçları</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Soru</th>
-            <th>Cevap</th>
-          </tr>
-        </thead>
-        <tbody>
-          {results.responses.map((response, index) => (
-            <tr key={index}>
-              <td>{response.question}</td>
-              <td>{response.answer}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-  
-      {/* Grafik Bileşenini Gösteriyoruz */}
-      <SurveyResultsChart results={results.responses} />
+
+      {Object.entries(
+        results.responses.reduce((acc, response) => {
+          if (!acc[response.question]) {
+            acc[response.question] = [];
+          }
+          acc[response.question].push(response.answer);
+          return acc;
+        }, {})
+      ).map(([question, answers]) => {
+        const groupedAnswers = groupAnswers(answers);
+        const labels = Object.keys(groupedAnswers);
+        const counts = Object.values(groupedAnswers);
+
+        const questionType = results.questions.find((q) => q.text === question)?.type;
+
+        return (
+          <div key={question} className="question-card">
+            <h3>{question}</h3>
+            <ul>
+              {labels.map((label, idx) => (
+                <li key={idx}>
+                  {label} - {counts[idx]} kez
+                </li>
+              ))}
+            </ul>
+            <SurveyResultsChart type={questionType} labels={labels} data={counts} />
+          </div>
+        );
+      })}
     </div>
   );
-  
 }
 
 export default SurveyResults;

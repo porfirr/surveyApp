@@ -61,33 +61,26 @@ app.get('/results/:id', (req, res) => {
 
 app.post('/surveys', (req, res) => {
   const newSurvey = req.body;
-  
-  const today = new Date().toISOString().split("T")[0];
-  let status = "Taslak";
 
-  if (today >= newSurvey.startDate && today <= newSurvey.endDate) {
-    status = "Yayında";
-  } else if (today > newSurvey.endDate) {
-    status = "Sona Ermiş";
-  }
+  // Sorulara benzersiz ID ekleyelim
+  const updatedQuestions = newSurvey.questions.map(question => ({
+    ...question,
+    id: Date.now() + Math.random(), // Benzersiz ID
+  }));
 
-  const surveyId = Date.now(); // Benzersiz ID
-
-  // Survey URL oluşturuluyor
-  // const surveyURL = `${req.protocol}://${req.get('host')}/respond/${surveyId}`;
+  const surveyId = Date.now();
   const surveyURL = `http://localhost:3000/respond/${surveyId}`;
-  
+
   const completeSurvey = {
     ...newSurvey,
     id: surveyId,
-    status, // Durum ekleniyor
-    surveyURL // URL ekleniyor
+    questions: updatedQuestions,
+    surveyURL,
+    responses: [],
   };
 
-  console.log('Oluşturulan anket backend:', completeSurvey); // Backend tarafında da loglayalım
-
   surveys.push(completeSurvey);
-  res.status(200).json(completeSurvey); // Başarı yanıtı dönülüyor
+  res.status(200).json(completeSurvey);
 });
 
 app.post('/respond/:id', (req, res) => {
@@ -124,20 +117,57 @@ app.put('/surveys/:id', (req, res) => {
   const surveyId = parseInt(req.params.id);
   const updatedSurvey = req.body;
 
-  // Güncellemek istediğimiz anketi bulalım
   const surveyIndex = surveys.findIndex(survey => survey.id === surveyId);
 
   if (surveyIndex === -1) {
     return res.status(404).send('Anket bulunamadı');
   }
 
+  const oldQuestions = surveys[surveyIndex].questions;
+  const newQuestions = updatedSurvey.questions;
+
+  // Durum hesaplaması
+  const today = new Date().toISOString().split('T')[0];
+  let status = 'Taslak';
+  if (today >= updatedSurvey.startDate && today <= updatedSurvey.endDate) {
+    status = 'Yayında';
+  } else if (today > updatedSurvey.endDate) {
+    status = 'Sona Ermiş';
+  }
+
   // Anketi güncelle
   surveys[surveyIndex] = {
-    ...surveys[surveyIndex], // Önceki anket verilerini koruyalım
-    ...updatedSurvey // Yeni verilerle güncelle
+    ...surveys[surveyIndex],
+    ...updatedSurvey,
+    status, // Durumu ekliyoruz
   };
 
+  // Soru eşleştirme
+  const questionMap = oldQuestions.reduce((map, oldQuestion) => {
+    const updatedQuestion = newQuestions.find(q => q.id === oldQuestion.id);
+    if (updatedQuestion) {
+      map[oldQuestion.text] = updatedQuestion.text; // Eski metni yeni metinle eşleştiriyoruz
+    }
+    return map;
+  }, {});
+
+  // Yanıtları güncelle
+  surveyResponses = surveyResponses.map(response => {
+    if (response.surveyId === surveyId) {
+      return {
+        ...response,
+        responses: response.responses.map(answer => ({
+          ...answer,
+          question: questionMap[answer.question] || answer.question,
+        })),
+      };
+    }
+    return response;
+  });
+
   console.log('Güncellenen anket:', surveys[surveyIndex]);
-  res.status(200).json(surveys[surveyIndex]); // Güncellenen anketi yanıt olarak gönder
+  console.log('Güncellenen tüm yanıtlar:', surveyResponses);
+  res.status(200).json(surveys[surveyIndex]);
 });
+
 console.log("Tüm kayıtlı yanıtlar:", surveyResponses);
