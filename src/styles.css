@@ -1,22 +1,124 @@
-.question-card {
-  margin-bottom: 20px;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-}
-
-ul {
-  list-style-type: disc;
+/* Genel Stiller */
+body {
+  font-family: 'Arial', sans-serif;
   margin: 0;
-  padding: 0 20px;
+  padding: 0;
+  background-color: #f9f9f9;
+  color: #333;
 }
 
-li {
-  margin: 5px 0;
-  font-size: 1rem;
+h1 {
+  text-align: center;
+  color: #4CAF50;
+  margin-top: 20px;
 }
 
-canvas {
-  max-height: 300px; /* Grafiklerin boyutunu kontrol edin */
+p {
+  text-align: center;
+}
+
+/* Form Stilleri */
+form {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+form input,
+form textarea,
+form select {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+form select {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+form button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 10px; /* Butonlar arasında boşluk */
+}
+
+form button:hover {
+  background-color: #45a049;
+}
+
+/* Anket Listesi Stilleri */
+.survey-list {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.survey-list .survey-card {
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fdfdfd;
+  text-align: center; /* Tüm metinler ve butonlar ortalanacak */
+}
+
+.survey-list .survey-card h3,
+.survey-list .survey-card p {
+  margin: 10px 0;
+}
+
+.survey-list .survey-card button {
+  margin: 10px 5px; /* Butonlar arasında boşluk */
+  padding: 8px 16px;
+}
+
+.survey-list .survey-card .delete-btn {
+  background-color: #e74c3c;
+}
+
+.survey-list .survey-card .delete-btn:hover {
+  background-color: #c0392b;
+}
+
+.survey-list .survey-card a {
+  display: block;
+  margin: 10px 0;
+  color: #4CAF50;
+  text-decoration: none;
+}
+
+.survey-list .survey-card a:hover {
+  text-decoration: underline;
+}
+
+/* Buton ve Seçenekler için Hizalama */
+.form-buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px; /* Butonlar arasında boşluk */
 }

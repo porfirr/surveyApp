@@ -45,9 +45,6 @@ app.get('/respond/:id', (req, res) => {
   res.status(200).json(completeSurvey);
 });
 
-
-
-
 app.get('/results/:id', (req, res) => {
   const surveyId = parseInt(req.params.id);
   const surveyResult = surveyResponses.filter(response => response.surveyId === surveyId);
@@ -62,6 +59,15 @@ app.get('/results/:id', (req, res) => {
 app.post('/surveys', (req, res) => {
   const newSurvey = req.body;
 
+  const today = new Date().toISOString().split("T")[0];
+  let status = "Taslak";
+
+  if (today >= newSurvey.startDate && today <= newSurvey.endDate) {
+    status = "Yayında";
+  } else if (today > newSurvey.endDate) {
+    status = "Sona Ermiş";
+  }
+
   // Sorulara benzersiz ID ekleyelim
   const updatedQuestions = newSurvey.questions.map(question => ({
     ...question,
@@ -75,6 +81,7 @@ app.post('/surveys', (req, res) => {
     ...newSurvey,
     id: surveyId,
     questions: updatedQuestions,
+    status,
     surveyURL,
     responses: [],
   };
@@ -123,9 +130,6 @@ app.put('/surveys/:id', (req, res) => {
     return res.status(404).send('Anket bulunamadı');
   }
 
-  const oldQuestions = surveys[surveyIndex].questions;
-  const newQuestions = updatedSurvey.questions;
-
   // Durum hesaplaması
   const today = new Date().toISOString().split('T')[0];
   let status = 'Taslak';
@@ -134,6 +138,9 @@ app.put('/surveys/:id', (req, res) => {
   } else if (today > updatedSurvey.endDate) {
     status = 'Sona Ermiş';
   }
+
+  const oldQuestions = surveys[surveyIndex].questions;
+  const newQuestions = updatedSurvey.questions;
 
   // Anketi güncelle
   surveys[surveyIndex] = {
@@ -169,5 +176,3 @@ app.put('/surveys/:id', (req, res) => {
   console.log('Güncellenen tüm yanıtlar:', surveyResponses);
   res.status(200).json(surveys[surveyIndex]);
 });
-
-console.log("Tüm kayıtlı yanıtlar:", surveyResponses);
