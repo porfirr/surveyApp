@@ -1,70 +1,151 @@
-# Getting Started with Create React App
+<h1>Anket Uygulaması</h1>  
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Bu proje, bir anket uygulaması geliştirmek amacıyla oluşturulmuş bir React ve Node.js tabanlı uygulamadır. Kullanıcılar yeni anketler oluşturabilir, mevcut anketleri düzenleyebilir, yanıt verebilir ve anket sonuçlarını görüntüleyebilir.
 
-## Available Scripts
 
-In the project directory, you can run:
+<h2>Özellikler</h2>
 
-### `npm start`
+<h3>Anket Oluşturma</h3>  
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+• Kullanıcılar anket başlığı, açıklaması, başlangıç ve bitiş tarihlerini belirleyebilir.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+• Sorular, "Evet/Hayır", "Çoktan Seçmeli" veya "Açık Uçlu" olarak seçilebilir.
 
-### `npm test`
+• Çoktan seçmeli sorulara seçenek eklenebilir.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+<h3>Anket Düzenleme ve Silme</h3>
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+• Oluşturulan anketler üzerinde düzenleme yapılabilir.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+• İstenmeyen anketler silinebilir.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+<h3>Yanıt Verme</h3>
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+• Kullanıcılar anket sorularını yanıtlayabilir.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+<h3>Anket Sonuçları Görüntüleme</h3>
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+• Anket sonuçları hem grafikler hem de listeler ile görselleştirilir.
 
-## Learn More
+• "Evet/Hayır" soruları pasta grafiğiyle; "Çoktan Seçmeli" ve "Açık Uçlu" sorular ise sütun grafiğiyle gösterilir.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+<h2>Kullanılan Teknolojiler</h2>
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+<h3>Frontend</h3>
 
-### Code Splitting
+• React.js
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+• CSS 
+      
+<h3>Backend</h3>
 
-### Analyzing the Bundle Size
+• Node.js
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+• Express.js
 
-### Making a Progressive Web App
+      
+<h1>Kurulum</h1>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+<h2>Gereksinimler</h2>
 
-### Advanced Configuration
+• Node.js (v14 veya üstü)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+• npm (Node.js ile birlikte gelir)
 
-### Deployment
+<h2>Adımlar</h2>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+<h3>1- Projeyi Klonlayın</h3>
 
-### `npm run build` fails to minify
+  ```
+  git clone https://github.com/kullanici/anket-uygulamasi.git
+  cd anket-uygulamasi
+  ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+<h3>2- Backend Kurulumu</h3>
+  
+  ```
+  cd backend
+  npm install
+  npm start
+  ```
+  
+  Backend sunucusu http://localhost:5000 adresinde çalışacaktır.
+
+<h3>3- Frontend Kurulumu</h3>
+  
+  ```
+  cd frontend
+  npm install
+  npm start
+  ```
+
+  Frontend uygulaması http://localhost:3000 adresinde çalışacaktır.
+
+<h1>Kullanım</h1>
+
+• Anket Oluşturma:
+
+  Uygulamanın anasayfasına gidin ve anket bilgilerini doldurun.
+  "Soru Ekle" butonuyla soruları ekleyin ve "Anketi Oluştur" butonuna tıklayın.
+  
+• Anketi Düzenleme ve Silme:
+
+  Oluşturulan anketlerin altındaki "Düzenle" veya "Sil" butonlarına tıklayın.
+  
+• Yanıt Verme:
+
+  Anketin altındaki "Yanıt Ver" butonuna tıklayın ve soruları cevaplayın.
+  
+• Sonuçları Görüntüleme:
+
+  Anketin altındaki "Sonuçları Görüntüle" butonuna tıklayın.
+  Grafik ve liste halinde sonuçları inceleyin.
+
+  
+<h1>Dosya Yapısı</h1>
+
+  ```
+  anket-uygulamasi/
+  ├── backend/
+  │   ├── server.js       # Backend API ve sunucu ayarları
+  │   └── package.json    # Backend bağımlılıkları
+  ├── frontend/
+  │   ├── src/
+  │   │   ├── components/ # React bileşenleri
+  │   │   ├── styles.css  # Genel CSS dosyası
+  │   │   └── App.js      # Uygulamanın ana dosyası
+  │   └── package.json    # Frontend bağımlılıkları
+  ├── README.md           # Bu doküman
+  └── .gitignore          # Git ignore kuralları
+  ```
+
+
+<h1>API Endpointleri</h1>
+
+  <h2>GET /surveys</h2>
+    Tüm anketleri listeler.
+  
+  <h2>POST /surveys</h2>
+    Yeni bir anket oluşturur.
+  
+  <h2>PUT /surveys/:id</h2>
+    Mevcut bir anketi günceller.
+  
+  <h2>DELETE /surveys/:id</h2>
+    Bir anketi siler.
+  
+  <h2>POST /respond/:id</h2>
+    Bir ankete yanıt gönderir.
+  
+  <h2>GET /respond/:id</h2>
+    Belirli bir ankete ait tüm yanıtları döndürür.
+
+
+<h1>Geliştirici Notları</h1>
+
+  • Backend ve frontend arasındaki iletişim axios kullanılarak sağlanmaktadır.
+  
+  • Backend geçici olarak bellekte veri tutmaktadır. Daha kalıcı bir çözüm için bir veritabanı entegrasyonu (örneğin, MongoDB) önerilir.
